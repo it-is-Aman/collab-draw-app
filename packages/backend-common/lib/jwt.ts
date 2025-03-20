@@ -1,1 +1,1 @@
-export const JWT_SECRET="hackedpassword"
+export const JWT_SECRET = process.env.JWT_SECRET || "hackedpassword"

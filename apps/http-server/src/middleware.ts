@@ -3,17 +3,17 @@ import { JWT_SECRET } from "@repo/backend-common/lib";
 import { NextFunction, Request, Response } from "express";
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+    const token = req.headers["authorization"] ?? "";
 
-    const token = req.headers["authentication"]
+    const decoded = jwt.verify(token, JWT_SECRET);
 
-    // @ts-ignore
-    const decode = jwt.verify(token, JWT_SECRET)
-
-    if (decode) {
-        // @ts-ignore
-        req.userId = decode.userId
-        next()
+    if (decoded) {
+        // @ts-ignore: TODO: Fix this
+        req.userId = decoded.userId;
+        next();
+    } else {
+        res.status(403).json({
+            message: "Unauthorized"
+        })
     }
-    return res.status(404).send({ msg: "failed to singin" })
-
 }
