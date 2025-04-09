@@ -4,10 +4,17 @@ import { JWT_SECRET } from "@repo/backend-common/lib"
 import { authMiddleware } from "./middleware";
 import { CreateUserSchema, SigninSchema, CreateRoomSchema } from "@repo/common/types"
 import { prismaClient } from "@repo/db/client"
+import cors from "cors"
+import cookieParser from "cookie-parser";
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
+app.use(cors({
+    origin: 'http://localhost:3002',    // your Next.js frontend
+    credentials: true
+}));
 
 app.post("/signup", async (req, res) => {
     const parsedData = CreateUserSchema.safeParse(req.body)
@@ -58,10 +65,21 @@ app.post("/signin", async (req, res) => {
     }
     const userId = user.id
     const token = jwt.sign({ userId }, JWT_SECRET)
+    res.cookie("token", token, {
+        httpOnly: true,      // can't be accessed from JavaScript
+        secure: false,        // use only in HTTPS
+        sameSite: "lax",     // helps with CSRF protection
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+    });
     res.json({ "token": token })
 
 })
 
+// @ts-ignore
+app.post("/logout", (req, res) => {
+    res.clearCookie("token");
+    return res.send({ message: "Logged out" });
+});
 
 // @ts-ignore: TODO: Fix this
 app.post("/room", authMiddleware, async (req, res) => {
@@ -104,10 +122,10 @@ app.get("/chats/:roomId", async (req, res) => {
             where: {
                 roomId: roomId
             },
-            take: 50,
-            orderBy: {
-                id: "desc"
-            }
+            // take: 50,
+            // orderBy: {
+            //     id: "desc"
+            // }
         })
 
         res.json({ chats })
