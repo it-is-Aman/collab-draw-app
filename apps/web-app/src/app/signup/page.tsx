@@ -1,8 +1,8 @@
-import AuthPage from "../../../components/authPage";
+import AuthPage from "../../../components/AuthPage";
 
 const Signup = () => {
     return (
-        <div>
+        <div className=" flex items-center justify-center min-h-screen">
             <AuthPage isSignin={false} />
         </div>
     );

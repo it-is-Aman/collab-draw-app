@@ -3,12 +3,14 @@
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 
 
 const AuthPage = ({ isSignin }: { isSignin: boolean }) => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [message, setMessage] = useState("")
 
     const handlesignin = async () => {
         const res = await axios.post(`${BACKEND_URL}/signin`, {
@@ -18,6 +20,11 @@ const AuthPage = ({ isSignin }: { isSignin: boolean }) => {
             withCredentials: true, // Important: Send/receive cookies
         })
         // console.log(res.data);
+        if (res.data.success) {
+            setMessage(res.data.success)
+            redirect("/joinroom")
+        }
+        setMessage(res.data.message)
     }
     const handlesignup = async () => {
         const res = await axios.post(`${BACKEND_URL}/signup`, {
@@ -26,6 +33,12 @@ const AuthPage = ({ isSignin }: { isSignin: boolean }) => {
             name: name
         })
         // console.log(res.data);
+        if (res.data.success) {
+            setMessage(res.data.success)
+            redirect("/signin")
+        }
+        setMessage(res.data.message)
+
     }
 
     return (
@@ -40,7 +53,10 @@ const AuthPage = ({ isSignin }: { isSignin: boolean }) => {
                 password<input type="text" placeholder="Email" onChange={(e) => setPassword(e.target.value)} />
             </div>
             <button onClick={isSignin ? handlesignin : handlesignup}>{isSignin ? "signin" : "signup"}</button>
-
+            {message && < div className=" rounded-2xl border p-2 w-full h-12">
+                {message}
+            </div>
+            }
         </div >
     );
 }

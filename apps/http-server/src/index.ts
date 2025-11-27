@@ -12,7 +12,7 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: 'http://localhost:3002',    // your Next.js frontend
+    origin: 'http://localhost:3000',    // your Next.js frontend
     credentials: true
 }));
 
@@ -35,9 +35,10 @@ app.post("/signup", async (req, res) => {
                 name: parsedData.data.name,
             }
         })
-        res.send({ userId: user.id })
+        // res.send({ userId: user.id })
+        res.json({ success: "User has been created" })
     } catch (error) {
-        res.status(411).json({ msg: "already exist user" })
+        res.status(411).json({ message: "already exist user" })
     }
 
 })
@@ -71,7 +72,9 @@ app.post("/signin", async (req, res) => {
         sameSite: "lax",     // helps with CSRF protection
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     });
-    res.json({ "token": token })
+    // res.json({ "token": token })
+    res.json({ success: "User is signed" })
+
 
 })
 
@@ -102,9 +105,9 @@ app.post("/room", authMiddleware, async (req, res) => {
             }
         })
 
-        res.json({
-            roomId: room.id
-        })
+        // console.log(room.id);
+        res.json({ success: `${room.slug} Room Created` })
+
     } catch (error) {
         res.status(411).json({
             message: "Room already exists with this name"
@@ -144,9 +147,11 @@ app.get("/room/:slug", async (req, res) => {
         }
     });
 
-    res.json({
-        room
-    })
+    if (!room) {
+        res.status(411).json({ message: "Unable to find room" })
+        return
+    }
+    res.json({ id: room.id })
 })
 
 app.listen(3001)

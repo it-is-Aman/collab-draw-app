@@ -8,7 +8,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     // console.log(req.cookies);
 
     const token = req.cookies["token"]
-    console.log(token);
+    // console.log(token);
 
 
     const decoded = jwt.verify(token, JWT_SECRET);
