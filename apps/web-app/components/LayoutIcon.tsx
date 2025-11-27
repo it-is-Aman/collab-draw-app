@@ -9,12 +9,17 @@ interface layoutProps {
 export default function LayoutIcon({ icon, onclick, activated }: layoutProps) {
 
     return (
-        <>
-            <div className={` rounded-full m-2 p-2 ${activated ? "text-red-600" : "text-white"} cursor-pointer`}
-                onClick={onclick}
-            >
-                {icon}
-            </div >
-        </>
+        <div
+            className={`
+                p-2 rounded-full cursor-pointer transition-all duration-200
+                ${activated
+                    ? "bg-blue-600 text-white shadow-lg scale-110"
+                    : "text-gray-400 hover:text-white hover:bg-gray-800"
+                }
+            `}
+            onClick={onclick}
+        >
+            {icon}
+        </div>
     )
 }
