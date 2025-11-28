@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { WS_URL } from '../config'
 import CanvasPage from './CanvasPage'
 
-function CanvasRoom({ id, token }: { id: number, token: any }) {
+function CanvasRoom({ id, token }: { id: number, token: string }) {
     const [websocket, setWebsocket] = useState<WebSocket | null>(null)
 
     useEffect(() => {
